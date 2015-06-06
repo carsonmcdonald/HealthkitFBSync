@@ -1,0 +1,2 @@
+github "dongri/OAuthSwift" ~> 0.3.4
+github "JonasGessner/JGProgressHUD" >= 1.2.6

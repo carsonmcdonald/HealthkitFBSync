@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+    </dependencies>
+    <scenes>
+        <!--Main View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="MainViewController" customModule="HealthkitSync" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fQe-hL-q4F">
+                                <rect key="frame" x="79" y="28" width="505" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="Wvv-u3-egf"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OJR-lP-ESg">
+                                <rect key="frame" x="16" y="28" width="55" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="0Lj-R6-p1s"/>
+                                    <constraint firstAttribute="width" constant="55" id="ycK-03-iLu"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eNC-Un-k6M">
+                                <rect key="frame" x="263" y="74" width="74" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="7uY-L9-4kJ"/>
+                                    <constraint firstAttribute="width" constant="74" id="wYa-nA-JQk"/>
+                                </constraints>
+                                <state key="normal" title="Fitbit Sync">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="fitbitSyncAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bBu-oc-wcJ"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yik-c8-7bv">
+                                <rect key="frame" x="123" y="131" width="461" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="Psj-kH-8hM"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Last Update:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eHV-1a-FW2">
+                                <rect key="frame" x="16" y="131" width="99" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="99" id="720-ZI-zgm"/>
+                                    <constraint firstAttribute="height" constant="21" id="m0T-De-chq"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="yik-c8-7bv" firstAttribute="leading" secondItem="eHV-1a-FW2" secondAttribute="trailing" constant="8" id="28Y-MS-hIx"/>
+                            <constraint firstAttribute="centerX" secondItem="eNC-Un-k6M" secondAttribute="centerX" id="FGn-02-fh9"/>
+                            <constraint firstItem="fQe-hL-q4F" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="GtC-1B-KZK"/>
+                            <constraint firstItem="fQe-hL-q4F" firstAttribute="leading" secondItem="OJR-lP-ESg" secondAttribute="trailing" constant="8" id="P3X-XY-EvA"/>
+                            <constraint firstAttribute="trailing" secondItem="yik-c8-7bv" secondAttribute="trailing" constant="16" id="WhX-YH-yuO"/>
+                            <constraint firstItem="eHV-1a-FW2" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="16" id="bwz-dJ-Sji"/>
+                            <constraint firstItem="yik-c8-7bv" firstAttribute="top" secondItem="eNC-Un-k6M" secondAttribute="bottom" constant="27" id="bz3-lG-H35"/>
+                            <constraint firstAttribute="trailing" secondItem="fQe-hL-q4F" secondAttribute="trailing" constant="16" id="f5C-Za-OC4"/>
+                            <constraint firstItem="OJR-lP-ESg" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="16" id="g6a-Gf-j2C"/>
+                            <constraint firstItem="eNC-Un-k6M" firstAttribute="top" secondItem="fQe-hL-q4F" secondAttribute="bottom" constant="25" id="jeG-mn-DFH"/>
+                            <constraint firstItem="eHV-1a-FW2" firstAttribute="top" secondItem="OJR-lP-ESg" secondAttribute="bottom" constant="82" id="uPJ-do-IqQ"/>
+                            <constraint firstItem="OJR-lP-ESg" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="uSJ-pY-O6y"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="fitbitSyncButton" destination="eNC-Un-k6M" id="PPz-MN-sCw"/>
+                        <outlet property="lastUpdatedLabel" destination="yik-c8-7bv" id="6o0-4x-Vhy"/>
+                        <outlet property="statusLabel" destination="fQe-hL-q4F" id="SPS-JZ-fUd"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+        <!--Auth Web View Controller-->
+        <scene sceneID="Lj9-XZ-q6I">
+            <objects>
+                <viewController storyboardIdentifier="FBAuthWebViewController" id="T57-Yz-UcE" customClass="FBAuthWebViewController" customModule="HealthkitSync" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="dXm-Hy-cgC"/>
+                        <viewControllerLayoutGuide type="bottom" id="8JO-ib-QsG"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="PeF-2B-lkb">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fVz-FN-3Xa">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <outlet property="delegate" destination="T57-Yz-UcE" id="fUT-qR-Q0J"/>
+                                </connections>
+                            </webView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="fVz-FN-3Xa" firstAttribute="top" secondItem="PeF-2B-lkb" secondAttribute="top" id="Axg-Bm-jP7"/>
+                            <constraint firstItem="8JO-ib-QsG" firstAttribute="top" secondItem="fVz-FN-3Xa" secondAttribute="bottom" id="ZTu-i6-HGh"/>
+                            <constraint firstItem="fVz-FN-3Xa" firstAttribute="leading" secondItem="PeF-2B-lkb" secondAttribute="leading" id="d6t-0e-xAE"/>
+                            <constraint firstAttribute="trailing" secondItem="fVz-FN-3Xa" secondAttribute="trailing" id="f2J-W7-06h"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="webView" destination="fVz-FN-3Xa" id="AoF-hs-soz"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="DTX-Tn-5NH" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="324" y="1081"/>
+        </scene>
+    </scenes>
+</document>
