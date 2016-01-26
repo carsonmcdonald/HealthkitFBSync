@@ -32,25 +32,27 @@ class MainViewController: UIViewController {
             
         } else {
             
-            healthKitStore.requestAuthorizationToShareTypes(
-                   [HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass),
-                    HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyFatPercentage),
-                    HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMassIndex)],
-                readTypes: [HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass),
-                            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyFatPercentage),
-                            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMassIndex)],
-                completion: { (success:Bool, error:NSError!) -> Void in
-                    
-                    if !success {
-                        self.showAlert("HealthKit authorization failed: \(error.description)")
-                        self.statusLabel.text = "HealthKit authorization failed"
-                    } else {
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            self.fitbitSyncButton.enabled = true
-                            self.statusLabel.text = "Ready to sync."
-                        })
-                    }
-                    
+        healthKitStore.requestAuthorizationToShareTypes(
+            
+            [HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!,
+             HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyFatPercentage)!,
+             HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMassIndex)!],
+            
+            readTypes: [HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!,
+                HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyFatPercentage)!,
+                HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMassIndex)!],
+            
+            completion: { (success, error) -> Void in
+                
+                if !success {
+                    self.showAlert("HealthKit authorization failed: \(error!.description)")
+                    self.statusLabel.text = "HealthKit authorization failed"
+                } else {
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.fitbitSyncButton.enabled = true
+                        self.statusLabel.text = "Ready to sync."
+                    })
+                }
             })
             
         }
@@ -66,7 +68,7 @@ class MainViewController: UIViewController {
         let userData = SavedUserData.loadUserData()
         
         self.fbAPI.fetchSortedWeightDataFromDateTime(userData.lastSyncTimestamp, success: { (weightData:[FBWeightData]) -> Void in
-            
+
             self.syncSortedFBToHK(weightData)
             
             if weightData.count > 0 {
@@ -152,7 +154,7 @@ class MainViewController: UIViewController {
         let limit = 10000
         
         let sampleQuery = HKSampleQuery(
-            sampleType: HKObjectType.quantityTypeForIdentifier(quantityTypeForIdentifier),
+            sampleType: HKObjectType.quantityTypeForIdentifier(quantityTypeForIdentifier)!,
             predicate: HKQuery.predicateForSamplesWithStartDate(startDate, endDate:endDate, options: .None),
             limit: limit,
             sortDescriptors: [sortDescriptor]) { (sampleQuery, results, error ) -> Void in
@@ -181,12 +183,12 @@ class MainViewController: UIViewController {
 
         let weightType = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)
         let weightQuantity = HKQuantity(unit: HKUnit.gramUnit(), doubleValue: Double(weightData.weightInKilograms * 1000.0))
-        let weightSample = HKQuantitySample(type: weightType, quantity: weightQuantity, startDate: weightData.dateTime, endDate: weightData.dateTime)
+        let weightSample = HKQuantitySample(type: weightType!, quantity: weightQuantity, startDate: weightData.dateTime, endDate: weightData.dateTime)
         
         self.healthKitStore.saveObject(weightSample, withCompletion: { (success, error) -> Void in
             
             if error != nil {
-                self.showAlert("Error saving HealthKit sample: \(error.description)")
+                self.showAlert("Error saving HealthKit sample: \(error!.description)")
             }
             
         })
@@ -197,12 +199,12 @@ class MainViewController: UIViewController {
         
         let fatType = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyFatPercentage)
         let fatQuantity = HKQuantity(unit: HKUnit.percentUnit(), doubleValue: Double(weightData.fat/100.0))
-        let fatSample = HKQuantitySample(type: fatType, quantity: fatQuantity, startDate: weightData.dateTime, endDate: weightData.dateTime)
+        let fatSample = HKQuantitySample(type: fatType!, quantity: fatQuantity, startDate: weightData.dateTime, endDate: weightData.dateTime)
         
         self.healthKitStore.saveObject(fatSample, withCompletion: { (success, error) -> Void in
             
             if error != nil {
-                self.showAlert("Error saving HealthKit sample: \(error.description)")
+                self.showAlert("Error saving HealthKit sample: \(error!.description)")
             }
             
         })
@@ -213,12 +215,12 @@ class MainViewController: UIViewController {
         
         let bmiType = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMassIndex)
         let bmiQuantity = HKQuantity(unit: HKUnit.countUnit(), doubleValue: Double(weightData.bmi))
-        let bmiSample = HKQuantitySample(type: bmiType, quantity: bmiQuantity, startDate: weightData.dateTime, endDate: weightData.dateTime)
+        let bmiSample = HKQuantitySample(type: bmiType!, quantity: bmiQuantity, startDate: weightData.dateTime, endDate: weightData.dateTime)
         
         self.healthKitStore.saveObject(bmiSample, withCompletion: { (success, error) -> Void in
             
             if error != nil {
-                self.showAlert("Error saving HealthKit sample: \(error.description)")
+                self.showAlert("Error saving HealthKit sample: \(error!.description)")
             }
             
         })
@@ -226,7 +228,7 @@ class MainViewController: UIViewController {
     }
     
     private func showAlert(message:String) {
-        var alert = UIAlertController(title: "Alert", message: message, preferredStyle: UIAlertControllerStyle.Alert)
+        let alert = UIAlertController(title: "Alert", message: message, preferredStyle: UIAlertControllerStyle.Alert)
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
         self.presentViewController(alert, animated: true, completion: nil)
     }

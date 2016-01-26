@@ -1,6 +1,6 @@
 import Foundation
 
-class FBWeightData: NSObject, Printable
+class FBWeightData: NSObject
 {
     var bmi: Float = 0.0
     var dateTime: NSDate!
@@ -18,7 +18,7 @@ class FBWeightData: NSObject, Printable
         if let weightArray = weightWrapperDict["weight"] as? NSArray {
             
             for weightDict in weightArray {
-                var weightEntry = FBWeightData()
+                let weightEntry = FBWeightData()
                 
                 if let bmi = weightDict["bmi"] as? Float {
                     weightEntry.bmi = bmi
@@ -51,7 +51,7 @@ class FBWeightData: NSObject, Printable
             
         }
         
-        parsedWeightList.sort { $0.dateTime.compare($1.dateTime) == NSComparisonResult.OrderedAscending }
+        parsedWeightList.sortInPlace { $0.dateTime.compare($1.dateTime) == NSComparisonResult.OrderedAscending }
         
         return parsedWeightList
     }

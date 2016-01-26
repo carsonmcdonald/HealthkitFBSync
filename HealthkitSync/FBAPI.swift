@@ -3,13 +3,14 @@ import OAuthSwift
 
 class FBAPI: NSObject {
     
-    let oauthswift = OAuth1Swift(
+    let oauthswift = OAuth2Swift(
         consumerKey:     Config.FBOauth.Key,
         consumerSecret:  Config.FBOauth.Secret,
-        requestTokenUrl: "https://api.fitbit.com/oauth/request_token",
-        authorizeUrl:    "https://www.fitbit.com/oauth/authorize",
-        accessTokenUrl:  "https://api.fitbit.com/oauth/access_token"
+        authorizeUrl:   "https://www.fitbit.com/oauth2/authorize",
+        accessTokenUrl: "https://api.fitbit.com/oauth2/token",
+        responseType:   "code"
     )
+    var isAuthenticated = false
     
     override init() {
         if let webViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("FBAuthWebViewController") as? FBAuthWebViewController {
@@ -23,18 +24,18 @@ class FBAPI: NSObject {
 
             let requestDatePairs = self.createRequestDatePairsFromStartDateToNow(startDateTime)
             var rdpCount = 0
-            var requestDatePairGen = GeneratorOf<[NSDate]> {
+            var requestDatePairGen = anyGenerator({ () -> [NSDate]? in
                 if rdpCount < requestDatePairs.count {
                     return requestDatePairs[rdpCount++]
                 }
                 return nil
-            }
+            })
             
             var allWeightData = [FBWeightData]()
             self.makeWeightRequestForDates(&requestDatePairGen, client: client, success: { (weightData) -> Void in
-                
+
                 if weightData == nil {
-                    allWeightData.sort { $0.dateTime.compare($1.dateTime) == NSComparisonResult.OrderedAscending }
+                    allWeightData.sortInPlace { $0.dateTime.compare($1.dateTime) == NSComparisonResult.OrderedAscending }
                     success(weightData: allWeightData)
                 } else {
                     allWeightData += weightData!
@@ -50,7 +51,7 @@ class FBAPI: NSObject {
         
     }
     
-    private func makeWeightRequestForDates(inout requestDatePairGen: GeneratorOf<[NSDate]>, client:OAuthSwift.OAuthSwiftClient, success: (weightData:[FBWeightData]?) -> Void, onError: (error: NSError) -> Void) {
+    private func makeWeightRequestForDates(inout requestDatePairGen: AnyGenerator<[NSDate]>, client:OAuthSwiftClient, success: (weightData:[FBWeightData]?) -> Void, onError: (error: NSError) -> Void) {
         
         if let requestDatePair = requestDatePairGen.next() {
         
@@ -66,19 +67,20 @@ class FBAPI: NSObject {
                 
                 if response.statusCode >= 200 && response.statusCode <= 299 {
                     
-                    var jsonError: NSError?
-                    let jsonDict: AnyObject! = NSJSONSerialization.JSONObjectWithData(data, options: nil, error: &jsonError)
-                    
-                    if let e = jsonError {
-                        onError(error: e)
-                    } else {
+                    do {
+                        
+                        let jsonDict = try NSJSONSerialization.JSONObjectWithData(data, options: [])
+                        
                         success(weightData: FBWeightData.parseWeightData(jsonDict))
                         
                         self.makeWeightRequestForDates(&requestDatePairGen, client: client, success: success, onError: onError)
+                        
+                    } catch let e as NSError {
+                        onError(error: e)
                     }
                     
                 } else {
-                    var dataAsString = NSString(data: data, encoding: NSUTF8StringEncoding)
+                    let dataAsString = NSString(data: data, encoding: NSUTF8StringEncoding)
                     onError(error: NSError(domain: Config.Errors.Domain,
                         code: Config.Errors.NetworkResponseError,
                         userInfo: [NSLocalizedDescriptionKey:"Request error (\(requestString)): code=\(response.statusCode) -> message=\(dataAsString)"]))
@@ -97,9 +99,9 @@ class FBAPI: NSObject {
         var requestDatePairs = [[NSDate]]()
         
         let calendar = NSCalendar.currentCalendar()
-        var endDate = NSDate()
+        let endDate = NSDate()
         var startDateTime = startDateTimeIn
-        var nextDateTime = calendar.dateByAddingUnit(NSCalendarUnit.CalendarUnitMonth, value: 1, toDate: startDateTime, options: NSCalendarOptions.allZeros)!
+        var nextDateTime = calendar.dateByAddingUnit(NSCalendarUnit.Month, value: 1, toDate: startDateTime, options: NSCalendarOptions())!
         
         // While nextDateTime is before endDate
         while(nextDateTime.compare(endDate) == NSComparisonResult.OrderedAscending) {
@@ -107,7 +109,7 @@ class FBAPI: NSObject {
             requestDatePairs.append([startDateTime, nextDateTime])
             
             startDateTime = nextDateTime
-            nextDateTime = calendar.dateByAddingUnit(NSCalendarUnit.CalendarUnitMonth, value: 1, toDate: startDateTime, options: NSCalendarOptions.allZeros)!
+            nextDateTime = calendar.dateByAddingUnit(NSCalendarUnit.Month, value: 1, toDate: startDateTime, options: NSCalendarOptions())!
 
         }
         
@@ -117,32 +119,34 @@ class FBAPI: NSObject {
         
     }
 
-    private func performOauthIfNeeded(withOauth: (client:OAuthSwift.OAuthSwiftClient) -> Void, onError: (error: NSError) -> Void) {
+    private func performOauthIfNeeded(withOauth: (client:OAuthSwiftClient) -> Void, onError: (error: NSError) -> Void) {
         
-        let userData = SavedUserData.loadUserData()
-        
-        if userData.isAuthed() {
-            let client = OAuthSwift.OAuthSwiftClient(consumerKey: Config.FBOauth.Key, consumerSecret: Config.FBOauth.Secret, accessToken: userData.oauthToken!, accessTokenSecret: userData.oauthSecret!)
+        if !isAuthenticated {
+            guard let callbackURL = NSURL(string: Config.FBOauth.CallbackURL) else {
+                onError(error: NSError(domain: Config.Errors.Domain,
+                    code: Config.Errors.NetworkResponseError,
+                    userInfo: [NSLocalizedDescriptionKey:"Invalid callback URL"]))
+                return
+            }
             
-            withOauth(client: client)
-        } else {
-            oauthswift.authorizeWithCallbackURL(NSURL(string: "oauth-hksync://oauth-callback/fitbit")!, success: { (credential: OAuthSwift.OAuthSwiftCredential, response: NSURLResponse?) -> Void in
-                
-                    userData.oauthToken = credential.oauth_token
-                    userData.oauthSecret = credential.oauth_token_secret
-                    userData.syncUserData()
-                
-                    withOauth(client: self.oauthswift.client)
-                
-                }, failure: { (error: NSError) -> Void in
+            oauthswift.accessTokenBasicAuthentification = true
+            
+            let state : String = generateStateWithLength(20) as String
+            
+            oauthswift.authorizeWithCallbackURL(callbackURL,
+                scope: "weight", // Only asking for weight data access
+                state: state,
+                success: { (credential, response, parameters) -> Void in
                     
-                    userData.oauthToken = nil
-                    userData.oauthToken = nil
-                    userData.syncUserData()
+                    withOauth(client: self.oauthswift.client)
+                    
+                }, failure: { (error) -> Void in
                     
                     onError(error: error)
                     
-                })
+            })
+        } else {
+            withOauth(client: self.oauthswift.client)
         }
 
     }

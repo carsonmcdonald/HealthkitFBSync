@@ -36,7 +36,7 @@ class FBAuthWebViewController: OAuthWebViewController, UIWebViewDelegate {
 
     func webView(webView: UIWebView, shouldStartLoadWithRequest request: NSURLRequest, navigationType: UIWebViewNavigationType) -> Bool {
         
-        if (request.URL!.scheme == "oauth-hksync"){
+        if (request.URL!.scheme == Config.FBOauth.CallbackURLScheme){
             self.dismissWebViewController()
         }
         
